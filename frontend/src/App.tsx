@@ -8,8 +8,6 @@ import { fromNano } from '@ton/core';
 function App() {
   const {
     counterValue,
-    recentSender,
-    ownerAddress,
     contractAddress,
     contractBalance,
     sendIncrement,
