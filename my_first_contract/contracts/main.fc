@@ -1,0 +1,83 @@
+#include "imports/stdlib.fc";
+
+const const:min_grams_for_storage = 10000000;
+
+
+(int, slice, slice) load_data() inline {
+    var ds = get_data().begin_parse();
+    return (
+        ds~load_uint(32),   ;;counter value
+        ds~load_msg_addr(), ;;sender address
+        ds~load_msg_addr()  ;;owner address
+    );
+}
+
+() save_data(int counter_value, slice recent_sender, slice owner_address) impure inline {
+    set_data(begin_cell()
+        .store_uint(counter_value, 32)
+        .store_slice(recent_sender)
+        .store_slice(owner_address)
+        .end_cell());
+}
+
+(int, slice, slice) get_contract_storage_data() method_id {
+    var (counter_val, sender_addr, owner_addr) = load_data();
+    return (
+        counter_val,
+        sender_addr,
+        owner_addr
+    );
+}
+
+int balance() method_id {
+    var [balance, _] = get_balance();
+    return balance;
+}
+
+() recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
+    slice cs = in_msg_full.begin_parse();
+    int flags = cs~load_uint(4);
+    slice sender_address = cs~load_msg_addr();
+
+    int op = in_msg_body~load_uint(32);
+
+    var (counter_value, recent_sender, owner_address) = load_data();
+
+    if (op == 1) { ;;increment saved value and memorize sender
+        int increment_by = in_msg_body~load_uint(32);
+        save_data(counter_value + increment_by, recent_sender, owner_address);
+        return();
+    } 
+
+    if (op == 2) { ;;deposit
+        return(); ;;everything is fine, no logic needed, thx 4 your $
+    }
+
+    if (op == 3) { ;;withdrawal
+        throw_unless(103, equal_slice_bits(sender_address, owner_address));
+
+        int withdraw_amount = in_msg_body~load_coins(); ;;ячейка хранит число, но мы вызываем load_coins() для более удобной работы
+        var [balance, _] = get_balance();
+        throw_unless(104, balance >= withdraw_amount);
+
+        int return_value = min(withdraw_amount, balance - const:min_grams_for_storage);
+
+        ;; Sending internal message...
+
+        int msg_mode = 1; ;;0 - ordinary message + 1 - pay fees separately from msg value
+
+        var msg = begin_cell()
+            .store_uint(0x18, 6)
+            .store_slice(sender_address)
+            .store_coins(return_value)
+            .store_uint(0, 1 + 4 + 4 + 64 + 32 + 1 + 1)
+        .end_cell();
+
+        send_raw_message(msg,msg_mode);
+
+        return();
+    }
+
+    throw(777);
+}
+
