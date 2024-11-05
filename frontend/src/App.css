@@ -1,0 +1,57 @@
+/* #root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+} */
+
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+header{
+  background-color: red;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+header > .warning{
+  font-size: large;
+  flex-grow: 1;
+  text-align: center;
+}
+.App{
+  margin: 5px;
+}
+main{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.incrementButton{
+  cursor: pointer;
+}
+.depositButton{
+  cursor: pointer;
+}
+.buttonContainer{
+  display: flex;
+  flex-direction: column;
+}
+a{
+  color: aqua;
+}
+.infoContainer{
+  display: flex;
+  flex-direction: column;
+}
+.container{
+  display: flex;
+  justify-content: center;
+}
