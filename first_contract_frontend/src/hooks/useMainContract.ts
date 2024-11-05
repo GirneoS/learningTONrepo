@@ -3,9 +3,16 @@ import { Main } from "../contracts/Main";
 import { useTonClient } from "./useTonClient";
 import { useAsyncInitialize } from "./useAsyncInitialize";
 import { Address, OpenedContract } from "@ton/core";
+import { toNano } from "@ton/core";
+import { useTonConnect } from "./useTonConnect";
 
 export function useMain() {
     const client = useTonClient();
+    const {sender} = useTonConnect();
+
+    const sleep = (time: number) => 
+        new Promise((resolve) => setTimeout(resolve,time));
+    
 
     const [contractData, setContractData] = useState<null | {
         counterValue: number;
@@ -35,6 +42,8 @@ export function useMain() {
                 ownerAddress: val.owner_address 
             });
             setBalance(balance);
+            await sleep(5000);
+            getValue();
         }
         getValue();
     }, [main]);
@@ -43,5 +52,8 @@ export function useMain() {
         contractAddress: main?.address.toString(),
         contractBalance: balance,
         ...contractData,
+        sendIncrement: async () => {
+            return main?.sendIncrement(sender, toNano('0.01'), 1);
+        }
     }
 }

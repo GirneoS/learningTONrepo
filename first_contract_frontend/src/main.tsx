@@ -4,7 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { TonConnectUIProvider } from '@tonconnect/ui-react'
 
-const manifestUrl = "https://join.toncompany.org"
+const manifestUrl = "https://github.com/GirneoS/learningTONrepo/blob/master/first_contract_frontend/manifest.json"
 
 createRoot(document.getElementById('root')!).render(
   <TonConnectUIProvider manifestUrl={manifestUrl}>

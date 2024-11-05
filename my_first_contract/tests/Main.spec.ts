@@ -152,4 +152,24 @@ describe('Main', () => {
         })
     });
 
+    it("Should increment by value", async () => {
+        const senderWallet = await blockchain.treasury('sender');
+
+        const incrementRequest = await main.sendIncrement(
+            senderWallet.getSender(),
+            toNano('0.05'),
+            1
+        );
+
+        expect(incrementRequest.transactions).toHaveTransaction({
+            from: senderWallet.address,
+            to: main.address,
+            success: true
+        });
+
+        const {number} = await main.getData();
+
+        expect(number).toEqual(1);
+    });
+
 });
