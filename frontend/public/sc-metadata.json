@@ -1,0 +1,7 @@
+{
+    "name": "Proposals Jetton",
+    "description": "The jetton for storing and changing proposals",
+    "symbol": "PJT",
+    "decimals": 0,
+    "image": "https://raw.githubusercontent.com/GirneoS/learningTONrepo/refs/heads/master/frontend/public/sc-logo.svg"
+ }
