@@ -8,30 +8,41 @@ const const:min_grams_for_storage = 10000000;
     return (
         ds~load_uint(32),   ;;counter value
         ds~load_msg_addr(), ;;sender address
-        ds~load_msg_addr()  ;;owner address
+        ds~load_msg_addr(),  ;;owner address
+        ds~load_ref(),
+        ds~load_uint(16)
     );
 }
 
-() save_data(int counter_value, slice recent_sender, slice owner_address) impure inline {
+() save_data(int counter_value, slice recent_sender, slice owner_address, cell dic, int last_index) impure inline {
     set_data(begin_cell()
         .store_uint(counter_value, 32)
         .store_slice(recent_sender)
         .store_slice(owner_address)
+        .store_ref(dic)
+        .store_uint(last_index)
         .end_cell());
 }
 
 (int, slice, slice) get_contract_storage_data() method_id {
-    var (counter_val, sender_addr, owner_addr) = load_data();
+    var (counter_val, sender_addr, owner_addr, dic, last_index) = load_data();
     return (
         counter_val,
         sender_addr,
-        owner_addr
+        owner_addr,
+        dic,
+        last_index
     );
 }
 
 int balance() method_id {
     var [balance, _] = get_balance();
     return balance;
+}
+
+() store_proposal(cell proposal, int index) impure method_id {
+    var (counter_val, sender_addr, owner_addr, dic, last_index) = load_data();
+    idict_set_ref(dic,16,index,proposal);
 }
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {

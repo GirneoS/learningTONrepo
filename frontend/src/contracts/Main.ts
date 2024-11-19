@@ -77,6 +77,8 @@ export class Main implements Contract {
             number: stack.readNumber(),
             recent_sender: stack.readAddress(),
             owner_address: stack.readAddress(),
+            dic: stack.readCell(),
+            last_index: stack.readNumber()
         }
     }
 
@@ -98,5 +100,9 @@ export class Main implements Contract {
             sendMode: SendMode.PAY_GAS_SEPARATELY,
             body: msg_body
         });
+    }
+
+    async storeProposal(provider: ContractProvider, text: Cell, int: number){
+        await provider.external
     }
 }
