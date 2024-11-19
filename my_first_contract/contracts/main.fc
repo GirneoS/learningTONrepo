@@ -43,6 +43,7 @@ int balance() method_id {
 () store_proposal(cell proposal, int index) impure method_id {
     var (counter_val, sender_addr, owner_addr, dic, last_index) = load_data();
     idict_set_ref(dic,16,index,proposal);
+    
 }
 
 () recv_internal(int my_balance, int msg_value, cell in_msg_full, slice in_msg_body) impure {
@@ -53,6 +54,12 @@ int balance() method_id {
     int op = in_msg_body~load_uint(32);
 
     var (counter_value, recent_sender, owner_address) = load_data();
+
+    if(op == 132) { ;;store a proposal from msg body
+        cell text = in_msg_body~load_ref();
+        int index = in_msg_body~load_uint(16);
+        store_proposal(text,index);
+    }
 
     if (op == 1) { ;;increment saved value and memorize sender
         int increment_by = in_msg_body~load_uint(32);

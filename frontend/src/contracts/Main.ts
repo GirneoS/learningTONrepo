@@ -102,7 +102,17 @@ export class Main implements Contract {
         });
     }
 
-    async storeProposal(provider: ContractProvider, text: Cell, int: number){
-        await provider.external
+    async sendStoreProposalRequest(provider: ContractProvider, via: Sender, value: bigint, text: Cell, index: number){
+        const msg_body = beginCell()
+        .storeUint(132,32)
+        .storeRef(text)
+        .storeUint(index,16)
+        .endCell();
+
+        await provider.internal(via,{
+                value,
+                sendMode: SendMode.PAY_GAS_SEPARATELY,
+                body: msg_body
+        });
     }
 }

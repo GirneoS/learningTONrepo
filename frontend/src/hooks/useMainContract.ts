@@ -3,7 +3,7 @@ import { Main } from "../contracts/Main";
 import { useTonClient } from "./useTonClient";
 import { useAsyncInitialize } from "./useAsyncInitialize";
 import { Address, OpenedContract } from "@ton/core";
-import { toNano } from "@ton/core";
+import { toNano, Cell } from "@ton/core";
 import { useTonConnect } from "./useTonConnect";
 
 export function useMain() {
@@ -60,6 +60,15 @@ export function useMain() {
         },
         sendWithdrawalRequest: async () => {
             return main?.sendWithdrawalRequest(sender, toNano('0.01'), toNano('0.3'))
+        },
+        sendStoreProposalRequest: async (text: Cell) => {
+            const val = await main?.getData();
+            
+            if(val?.last_index==undefined)
+                throw(new Error())
+
+            return main?.sendStoreProposalRequest(sender, toNano('0.01'), text, val?.last_index+1)
+            
         }
     }
 }
